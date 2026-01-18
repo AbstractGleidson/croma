@@ -13,9 +13,13 @@ def segmentationByColor(image, min, max):
     
     return mask
 
-def mergeImages(image, background, min, max):
+def mergeImages(image, background, minc, maxc):
     
-    mask = segmentationByColor(image, min, max)
+    mask1 = segmentationByColor(image, minc, maxc)
+    mask2 = segmentationByColor(image, min=[0,100,100], max=[0,255,255])
+    
+    mask = mask1 & mask2 # type: ignore
+    
     mask_not = openCV.bitwise_not(mask)
     
     mask = numpy.array(mask >= 1).astype("uint8")
