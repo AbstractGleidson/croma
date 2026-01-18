@@ -1,7 +1,7 @@
 from pathlib import Path
 import yaml
 
-PATH_ASSETS = Path(__file__).parent.parent / "assets"
+PATH_ASSETS = Path(__file__).parent.parent.parent / "assets"
 PATH_COLORS = PATH_ASSETS / "colors.yaml"
 PATH_IMAGES = PATH_ASSETS / "images"
 

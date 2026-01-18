@@ -6,19 +6,21 @@ def segmentationByColor(image, min, max):
     min = numpy.array(min)
     max = numpy.array(max)
     
-    hsv = openCV.cvtColor(image, openCV.COLOR_BGR2HSV) # Converte para o espaco HSV
+    blur = openCV.medianBlur(
+        image,
+        7
+    )
+    
+    hsv = openCV.cvtColor(blur, openCV.COLOR_BGR2HSV) # Converte para o espaco HSV
     
     mask = openCV.inRange(hsv, min, max)
     mask = openCV.bitwise_not(mask)
     
     return mask
 
-def mergeImages(image, background, minc, maxc):
+def mergeImages(image, background, min, max):
     
-    mask1 = segmentationByColor(image, minc, maxc)
-    mask2 = segmentationByColor(image, min=[0,100,100], max=[0,255,255])
-    
-    mask = mask1 & mask2 # type: ignore
+    mask = segmentationByColor(image, min, max)
     
     mask_not = openCV.bitwise_not(mask)
     
