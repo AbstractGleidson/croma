@@ -1,14 +1,12 @@
 import cv2 as openCV
 import numpy
 from src.utils.utils import readColorYaml, PATH_IMAGES, hsvToOpenCV
-from src.segmentation.byColor import mergeImages, segmentationByColor
+from segmentation.segmentation import Segmentation
 
 if __name__ == "__main__":
     
     
     path = str(PATH_IMAGES / "2.jpeg")
-    
-    
     image = openCV.imread(path)
     
     if image is not None:
@@ -19,7 +17,7 @@ if __name__ == "__main__":
     
         background = numpy.full((height, width, 3), (255,255, 255)).astype("uint8")
         
-        mask = mergeImages(image, background, color["min"], color["max"])
+        mask = Segmentation.chromaKey(image, background, color["min"], color["max"])
         
         openCV.imshow("Image", image) 
         openCV.imshow("Mask", mask)

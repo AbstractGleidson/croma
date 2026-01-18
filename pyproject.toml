@@ -9,6 +9,9 @@ dependencies=[
     "PyYAML>=6.0",
 ]
 
+[project.scripts]
+chroma = "src.cli.core:chroma"
+
 [build-system]
 requires = ["flit-core<4"]
 build-backend = "flit_core.buildapi"
