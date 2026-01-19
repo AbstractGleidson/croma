@@ -1,51 +1,53 @@
 import click
 from chroma.segmentation.segmentation import Segmentation
-from chroma.utils.utils import readColorYaml, PATH_IMAGES
+from chroma.utils.utils import readColorYaml
 import numpy
 import cv2 as openCV
 
 def SegImage(image, background, color):
     
-    # tenta ler imagem e plano de fundo
-    image = openCV.imread(image)
-    background = openCV.imread(background)
+    img = openCV.imread(image)
     
-    if image is None:
-        click.echo("Nenhuma imagem foi passada como parâmetro!")
+    if img is None:
+        raise FileNotFoundError("O arquivo da imagem para aplicar o filtro não foi encontrado!")
     
+    height, width = img.shape[:2]
+        
+    # Configura plano de fundo
+    if background is None:
+        back = numpy.full((height, width, 3), (0, 0, 0)).astype("uint8")
     else:
-        height, width = image.shape[:2]
-        
-        # Configura plano de fundo
-        if background is None:
-            background = numpy.full((height, width, 3), (0, 0, 0)).astype("uint8")
-        else:
-            background = openCV.resize(
-                background,
-                (width, height),
-                interpolation=openCV.INTER_CUBIC
-            )
-        
-        # Leitura da cor 
-        if color is not None and color.lower() in ["green", "red", "blue"]:
-            color = readColorYaml(color.lower())
-        else:
-            color = readColorYaml("green")
+        back = openCV.imread(background)
             
-        mask = Segmentation.chromaKey(
-            image, 
-            background, 
-            color['min'], color['max']
+        if back is None:
+            raise FileNotFoundError("O arquivo do plano de fundo não foi encontrado!")
+            
+        back = openCV.resize(
+            back,
+            (width, height),
+            interpolation=openCV.INTER_CUBIC
         )
+            
+    # Leitura da cor 
+    if color is not None and color.lower() in ["green", "red", "blue"]:
+        col = readColorYaml(color.lower())
+    else:
+        col = readColorYaml("green")
+            
+    mask = Segmentation.chromaKey(
+        img, 
+        back, 
+        col['min'], col['max']
+    )
         
-        openCV.imshow('Imagem', image)
-        openCV.imshow('Imagem chroma', mask)
-        openCV.imshow('Plano de fundo', background) # type: ignore
+    openCV.imshow('Imagem', img)
+    openCV.imshow('Imagem chroma', mask)
+    openCV.imshow('Plano de fundo', back) # type: ignore
         
-        key = openCV.waitKey(0) & 0xFF
+    key = openCV.waitKey(0) & 0xFF
         
-        if key == ord('q'):
-            openCV.destroyAllWindows()
+    if key == ord('q'):
+        openCV.destroyAllWindows()
 
 def SegWebCam(webcam, background, color, height, width):
     

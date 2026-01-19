@@ -2,8 +2,9 @@ from pathlib import Path
 import yaml
 
 PATH_ASSETS = Path(__file__).parent.parent.parent / "assets"
+PATH_HOME = Path.home() 
 PATH_COLORS = PATH_ASSETS / "colors.yaml"
-PATH_IMAGES = PATH_ASSETS / "images"
+PATH_ASSETS_IMAGES = PATH_ASSETS / "images"
 
 def hsvToOpenCV(hue:int, saturation:int, value:int):
     """
@@ -23,6 +24,9 @@ def hsvToOpenCV(hue:int, saturation:int, value:int):
     n_value = int((value / 100) * 255)
     
     return (n_hue, n_saturation, n_value)
+
+def getPath(path:str):
+    return str(PATH_HOME / path)
 
 def readColorYaml(color:str):
     
