@@ -1,10 +1,28 @@
 import click
 from chroma.segmentation.segmentation import Segmentation
 from chroma.utils.utils import readColorYaml
+from chroma.utils.getColor import GetColor
+from .exeptions.ColorNotFound import ColorNotFound
+from .exeptions.ColorNotSelected import ColorNotSelected
 import numpy
 import cv2 as openCV
 
 def SegImage(image, background, color):
+    
+    # Leitura da cor 
+    if color is None:
+        color = GetColor.getColor(image)
+    
+        if color is None:
+            raise ColorNotSelected("Você não selecinou uma cor.")
+        
+        col = color.copy()
+        
+    elif color.lower() in ["green", "blue", "red"]:
+        col = readColorYaml("green")
+    
+    else:
+        raise ColorNotFound("Cor passada como parâmetro não foi encontrada.")
     
     img = openCV.imread(image)
     
@@ -27,12 +45,6 @@ def SegImage(image, background, color):
             (width, height),
             interpolation=openCV.INTER_CUBIC
         )
-            
-    # Leitura da cor 
-    if color is not None and color.lower() in ["green", "red", "blue"]:
-        col = readColorYaml(color.lower())
-    else:
-        col = readColorYaml("green")
             
     mask = Segmentation.chromaKey(
         img, 
