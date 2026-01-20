@@ -1,4 +1,5 @@
 import cv2 as openCV
+import numpy
 
 class GetColor:
     
@@ -9,6 +10,12 @@ class GetColor:
         self._y_end = None
         self._drawing = None 
         self._endDrawing = None 
+        self.rectangles = [] # local onde vao ser as posicoes dos retangulos
+        
+        self._points = [] # pontos para getColorByPoint
+        self._drawingP = None
+        self._xp = None
+        self._yp = None
     
     # Escuta os eventos 
     def _click_and_crop(self, event, x, y, flags, param):    
@@ -26,8 +33,17 @@ class GetColor:
             self._x_end, self._y_end = x, y
             self._drawing = False
             self._endDrawing = True
+            
+            if self._x_start != self._x_end and self._y_start != self._y_end:
+                self.rectangles.append({"start": (self._x_start, self._y_start), "end": (self._x_end, self._y_end)})
+                
+    def _click(self, event, x, y, flags, param):
+        if event == openCV.EVENT_LBUTTONDBLCLK:
+            self._xp, self._yp = x, y
+            self._points.append((x, y))
+            self._drawingP = True
 
-    def getColor(self, imagePath):
+    def getColorByRect(self, imagePath):
         
         image = openCV.imread(imagePath)
         
@@ -36,7 +52,6 @@ class GetColor:
             self._drawing = False
             self._endDrawing = False
             
-            rectangles = [] # local onde vao ser as posicoes dos retangulos
             drawingImage = image.copy()
             
             # Cria uma janle
@@ -65,35 +80,93 @@ class GetColor:
                 
                 elif key == ord("r"): # reseta os desnhos da imagem
                     drawingImage = image.copy()
-                    rectangles = []
+                    self.rectangles = []
                     self._drawing = False
                     self._endDrawing = False
                 
                 elif key == ord("q"):
                     break
+            
+            if len(self.rectangles) >= 1:
+                openCV.destroyAllWindows() # destroi todas as janelas
+                imageHsv = openCV.cvtColor(image, openCV.COLOR_BGR2HSV)
+                
+                maxC = []
+                minC = []
+                
+                print()
+                print(self.rectangles)
+                print()
+                
+                for i, rect in enumerate(self.rectangles):
+                    
+                    if rect["start"] != rect["end"]: # Verifica se realmente é um retangulo
+                        imageCut = imageHsv[rect["start"][1]:rect["end"][1], rect["start"][0]:rect["end"][0]]
+                        
+                        if i == 0:
+                            maxC = [imageCut[:,:,0].max(), imageCut[:,:,1].max(), imageCut[:,:,2].max()]
+                            minC = [imageCut[:,:,0].min(), imageCut[:,:,1].min(), imageCut[:,:,2].min()]
+                        
+                        else:
+                            maxC = [max(imageCut[:,:,0].max(), maxC[0]), max(imageCut[:,:,1].max(), maxC[1]), max(imageCut[:,:,2].max(), maxC[2])]
+                            minC = [min(imageCut[:,:,0].min(), minC[0]), min(imageCut[:,:,1].min(), minC[1]), min(imageCut[:,:,2].min(), minC[2])]
+                            
+                return {"min": minC, "max": maxC}
+            
+            else:
+                return None
+    
+    def getColorByPoint(self, imagePath):
+        
+        image = openCV.imread(imagePath)
+        
+        if image is not None:
+            self._drawingP = False
+            drawingImage = image.copy()
+            
+            # Cria uma janle
+            openCV.namedWindow("Selecione a cor do plano de fundo")
+            openCV.setMouseCallback("Selecione a cor do plano de fundo", self._click)
 
-            # tenho que guarda todos os retangulos
-            rectangles = [(self._x_start, self._y_start), (self._x_end, self._y_end)]
-            
-            if len(rectangles) == 2:
-                roi = image[rectangles[0][1]:rectangles[1][1], rectangles[0][0]:rectangles[1][0]]
-                hsvRoi = openCV.cvtColor(roi, openCV.COLOR_BGR2HSV)
-                openCV.destroyAllWindows()
+            while True:
+               
+                if not self._drawingP:
+                    drawingImage[self._xp, self._yp] = numpy.array([0, 255, 0]).astype("uint8")
+                    self._drawingP = False 
                 
-                color = {
-                    "min": [
-                        hsvRoi[:,:,0].min(),
-                        hsvRoi[:,:,1].min(),
-                        hsvRoi[:,:,2].min(),
-                    ],
-                    "max": [
-                        hsvRoi[:,:,0].max(),
-                        hsvRoi[:,:,1].max(),
-                        hsvRoi[:,:,2].max()
-                    ],
-                }
+                openCV.imshow("Selecione a cor do plano de fundo", drawingImage)
+                    
+                key = openCV.waitKey(1) & 0xFF     
                 
-                return color
+                if key == ord("s"): # cor selecionada 
+                    break    
+                
+                elif key == ord("r"): # reseta os desnhos da imagem
+                    drawingImage = image.copy()
+                    self._points = []
+                    self._drawingP = False
+                
+                elif key == ord("q"):
+                    break
             
-        else:
-            return None
+            if len(self._points) >= 2:
+                openCV.destroyAllWindows() # destroi todas as janelas
+                imageHsv = openCV.cvtColor(image, openCV.COLOR_BGR2HSV)
+
+                h, s, v = [], [], []
+                
+                for point in enumerate(self._points):
+                    
+                    imageCut = imageHsv[point[0], point[1]]
+                    h.append(imageCut[:,:,0])
+                    s.append(imageCut[:,:,1])
+                    v.append(imageCut[:,:,2])
+                            
+                
+                return {
+                    "min": [min(h), min(s), min(v)],
+                    "max": [max(h), max(s), max(v)]
+                    }
+            
+            else:
+                return None
