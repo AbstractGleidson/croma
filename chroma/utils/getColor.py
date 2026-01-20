@@ -38,7 +38,7 @@ class GetColor:
                 self.rectangles.append({"start": (self._x_start, self._y_start), "end": (self._x_end, self._y_end)})
                 
     def _click(self, event, x, y, flags, param):
-        if event == openCV.EVENT_LBUTTONDBLCLK:
+        if event == openCV.EVENT_LBUTTONDOWN:
             self._xp, self._yp = x, y
             self._points.append((x, y))
             self._drawingP = True
@@ -122,6 +122,7 @@ class GetColor:
         
         if image is not None:
             self._drawingP = False
+            self._xp, self._yp = 0, 0
             drawingImage = image.copy()
             
             # Cria uma janle
@@ -130,8 +131,8 @@ class GetColor:
 
             while True:
                
-                if not self._drawingP:
-                    drawingImage[self._xp, self._yp] = numpy.array([0, 255, 0]).astype("uint8")
+                if self._drawingP:
+                    openCV.circle(drawingImage, (self._xp, self._yp), 4, (0, 255, 0), -1)
                     self._drawingP = False 
                 
                 openCV.imshow("Selecione a cor do plano de fundo", drawingImage)
@@ -155,16 +156,16 @@ class GetColor:
 
                 h, s, v = [], [], []
                 
-                for point in enumerate(self._points):
-                    
-                    imageCut = imageHsv[point[0], point[1]]
-                    h.append(imageCut[:,:,0])
-                    s.append(imageCut[:,:,1])
-                    v.append(imageCut[:,:,2])
+                for point in self._points:
+                    imageCut = imageHsv[point[1], point[0]] # Por algum motico é invertido 
+            
+                    h.append(imageCut[0])
+                    s.append(imageCut[1])
+                    v.append(imageCut[2])
                             
                 
                 return {
-                    "min": [min(h), min(s), min(v)],
+                    "min": [min(h), min(s), min(v)], # testar como valores fixos de saturation e value (100 e 255)
                     "max": [max(h), max(s), max(v)]
                     }
             
