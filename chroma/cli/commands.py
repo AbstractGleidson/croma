@@ -42,7 +42,10 @@ def webcam(webcam, back, color, h, w):
 def color(image):
     
     if image is not None:
-        color = GetColor.getColor(
+        
+        get = GetColor()
+        
+        color = get.getColor(
             getPath(image)
         )
         
