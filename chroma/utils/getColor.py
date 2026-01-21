@@ -2,8 +2,6 @@ import cv2 as openCV
 import numpy
 
 class GetColor:
-    
-    
     # Variaveis para a leitura usando retangulos
     _x_start = None
     _y_start = None 
@@ -17,8 +15,8 @@ class GetColor:
     
     # Escuta os eventos para a funcao getColorByRect
     @classmethod
-    def _click_and_crop(cls, event, x, y, flags, param):    
-        
+    def _mouseEvents(cls, event, x, y, flags, param):    
+    
         if event == openCV.EVENT_LBUTTONDOWN: # Mouse foi pressionado para baixo
             cls._x_start, cls._y_start, cls._x_end, cls._y_end = x, y, x, y
             cls._drawing = True # Indica que comecou um desenho 
@@ -42,7 +40,7 @@ class GetColor:
                 cls._react = False
     
     @classmethod
-    def clearPoints(cls, imageHsv):
+    def _clearPoints(cls, imageHsv):
         
         if len(cls._points) >= 1:
             h, s, v = [], [], []
@@ -62,7 +60,7 @@ class GetColor:
         return None, None
     
     @classmethod
-    def clearRects(cls, imageHsv):
+    def _clearRects(cls, imageHsv):
         
         if len(cls._rectangles) >= 1:
                 
@@ -94,12 +92,15 @@ class GetColor:
             cls._drawing = False
             cls._endDrawing = False
             cls._react = False
+            cls._rectangles = []
+            cls._points = []
+            cls._mouse = (0,0)
             
             drawingImage = image.copy()
             
             # Cria uma janle
             openCV.namedWindow("Selecione a cor do plano de fundo")
-            openCV.setMouseCallback("Selecione a cor do plano de fundo", cls._click_and_crop)
+            openCV.setMouseCallback("Selecione a cor do plano de fundo", cls._mouseEvents)
 
             while True:
                 i = drawingImage.copy()
@@ -139,8 +140,8 @@ class GetColor:
             openCV.destroyAllWindows()
             hsvImage = openCV.cvtColor(image, openCV.COLOR_BGR2HSV)
             
-            maxRect, minRect = cls.clearRects(hsvImage)
-            maxPoint, minPoint = cls.clearPoints(hsvImage)
+            maxRect, minRect = cls._clearRects(hsvImage)
+            maxPoint, minPoint = cls._clearPoints(hsvImage)
             
             if maxPoint is not None and maxRect is not None:
             
