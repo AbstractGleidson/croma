@@ -39,21 +39,12 @@ def webcam(webcam, back, color, h, w):
     
 @click.command()
 @click.option("--image", default=None, help="Imagem para estudar a cor.")
-@click.option("--shape", default="rect", help="Forma para selecionar a cor. Existem duas forma possíves point(com pontos) e rect(com retângulos)")
-def color(image, shape):
+def color(image):
     
     if image is not None:
-        
-        get = GetColor()
-        
-        if shape.lower() == "rect":
-            color = get.getColorByRect(
-                getPath(image)
-            )
-        else:
-            color = get.getColorByPoint(
-                getPath(image)
-            )
+        color = GetColor.getColor(
+            getPath(image)
+        )
         
         if color is not None:
             click.echo("A cor lidar na escala HSV foi: ")

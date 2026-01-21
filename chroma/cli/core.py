@@ -11,8 +11,7 @@ def SegImage(image, background, color):
     
     # Leitura da cor 
     if color is None:
-        get = GetColor()
-        color = get.getColorByPoint(image)
+        color = GetColor.getColor(image)
     
         if color is None:
             raise ColorNotSelected("Você não selecinou uma cor.")
