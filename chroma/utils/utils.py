@@ -4,7 +4,6 @@ import yaml
 PATH_ASSETS = Path(__file__).parent.parent.parent / "assets"
 PATH_HOME = Path.home() 
 PATH_COLORS = PATH_ASSETS / "colors.yaml"
-PATH_ASSETS_IMAGES = PATH_ASSETS / "images"
 
 def hsvToOpenCV(hue:int, saturation:int, value:int):
     """
