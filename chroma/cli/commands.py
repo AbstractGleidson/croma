@@ -62,6 +62,14 @@ def color(image):
         click.echo("\n\tchrome color --image=path\n")
         click.echo("path deve ser o caminho onde está a sua imagem.")
 
+@click.command()
+def hello():
+    click.echo("\nChroma funcionando!")
+    click.echo("Teste: ")
+    click.echo("\n\tchroma color --image=path")
+    click.echo("\npath deve ser o caminho onde está a sua imagem.")
+
+chroma.add_command(hello)
 chroma.add_command(color)
 chroma.add_command(image)
 chroma.add_command(webcam)
