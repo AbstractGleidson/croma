@@ -107,18 +107,18 @@ class GetColor:
             drawingImage = image.copy()
             
             # Cria uma janle
-            openCV.namedWindow("Selecione a cor do plano de fundo")
-            openCV.setMouseCallback("Selecione a cor do plano de fundo", cls._mouseEvents)
+            openCV.namedWindow("s: salvar  q: sair  r: reverter")
+            openCV.setMouseCallback("s: salvar  q: sair  r: reverter", cls._mouseEvents)
 
             while True:
                 i = drawingImage.copy()
                 
                 if not cls._drawing and not cls._endDrawing:
-                    openCV.imshow("Selecione a cor do plano de fundo", drawingImage)
+                    openCV.imshow("s: salvar  q: sair  r: reverter", drawingImage)
                     
                 elif cls._drawing and not cls._endDrawing:
                     openCV.rectangle(i, (cls._x_start, cls._y_start), (cls._x_end, cls._y_end), (0, 0, 255), 2)
-                    openCV.imshow("Selecione a cor do plano de fundo", i)
+                    openCV.imshow("s: salvar  q: sair  r: reverter", i)
                     
                 elif not cls._drawing and cls._endDrawing:
                     if cls._react:
@@ -126,7 +126,7 @@ class GetColor:
                     else:
                         openCV.circle(drawingImage, (cls._x_end, cls._y_end), 4, (0, 0, 255), -1)
                     
-                    openCV.imshow("Selecione a cor do plano de fundo", drawingImage)
+                    openCV.imshow("s: salvar  q: sair  r: reverter", drawingImage)
                     
                 key = openCV.waitKey(1) & 0xFF     
                 

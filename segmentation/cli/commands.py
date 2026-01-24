@@ -1,4 +1,5 @@
 import click
+import cv2 as openCV
 from segmentation.src.utils import getPath
 from segmentation.src.getColor import GetColor
 from segmentation.src.chroma.chromaImage import chromaImage
@@ -221,20 +222,27 @@ def webcam(webcam, back, color, h, w):
 def color(image):
     
     if image is not None:
-        color = GetColor.getColor(
+        img = openCV.imread(
             getPath(image)
         )
-        
-        if color is not None:
-            click.echo("A cor lidar na escala HSV foi: ")
-            click.echo(f"\nValores minimos: ")
-            click.echo(f"\thue - {color["min"][0]}\n\tsaturation - {color["min"][1]}\n\tvalue - {color["min"][2]}")
-            click.echo(f"\nValores máximos: ")
-            click.echo(f"\thue - {color["max"][0]}\n\tsaturation - {color["max"][1]}\n\tvalue - {color["max"][2]}")
+    
+        if img is not None:
+            color = GetColor.getColor(
+                img
+            )
+            
+            if color is not None:
+                click.echo("A cor lidar na escala HSV foi: ")
+                click.echo(f"\nValores minimos: ")
+                click.echo(f"\thue - {color["min"][0]}\n\tsaturation - {color["min"][1]}\n\tvalue - {color["min"][2]}")
+                click.echo(f"\nValores máximos: ")
+                click.echo(f"\thue - {color["max"][0]}\n\tsaturation - {color["max"][1]}\n\tvalue - {color["max"][2]}")
+            else:
+                click.echo("Você não selecionou nenhuma cor.")
+            
+            
         else:
-            click.echo("Você não selecionou nenhuma cor.")
-        
-        
+            click.echo("Imagem não foi encontrada.")
     else:
         click.echo("Nenhuma imagem foi informada.\n")
         click.echo("Utilize o parâmetro --image para definir o caminho da imagem que será estudada.\n")
