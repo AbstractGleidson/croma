@@ -1,5 +1,4 @@
 import cv2 as openCV
-import numpy
 
 class GetColor:
     # Variaveis para a leitura usando retangulos
