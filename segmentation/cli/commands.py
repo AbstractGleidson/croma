@@ -1,10 +1,11 @@
 import click
-from chroma.utils.utils import getPath
-from chroma.utils.getColor import GetColor
-from .core import SegImage, SegWebCam
+from segmentation.src.utils import getPath
+from segmentation.src.getColor import GetColor
+from segmentation.src.chroma.chromaImage import chromaImage
+from segmentation.src.chroma.chromaWebcam import chromaWebcam
 
 @click.group()
-def chroma():
+def seg():
     pass
 
 @click.command()
@@ -20,7 +21,7 @@ def image(front, back, color):
         if back_path is not None:
             back_path = getPath(back_path)
         
-        SegImage(image_path, back_path, color)
+        chromaImage(image_path, back_path, color)
 
     else:
         click.echo("Utilize o parâmetro --image para definir o caminho da image para aplicar o filtro")
@@ -35,7 +36,7 @@ def image(front, back, color):
 @click.option("--h", default=640, help="Altura da janela. Por padrão 640px.")
 @click.option("--w", default=480, help="Largura da janela. Por padrao 480px")
 def webcam(webcam, back, color, h, w):
-    SegWebCam(webcam, back, color, h, w)
+    chromaWebcam(webcam, back, color, h, w)
     
 @click.command()
 @click.option("--image", default=None, help="Imagem para estudar a cor.")
@@ -62,14 +63,6 @@ def color(image):
         click.echo("\n\tchrome color --image=path\n")
         click.echo("path deve ser o caminho onde está a sua imagem.")
 
-@click.command()
-def hello():
-    click.echo("\nChroma funcionando!")
-    click.echo("Teste: ")
-    click.echo("\n\tchroma color --image=path")
-    click.echo("\npath deve ser o caminho onde está a sua imagem.")
-
-chroma.add_command(hello)
-chroma.add_command(color)
-chroma.add_command(image)
-chroma.add_command(webcam)
+seg.add_command(color)
+seg.add_command(image)
+seg.add_command(webcam)

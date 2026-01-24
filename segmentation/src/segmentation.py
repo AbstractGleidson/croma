@@ -17,7 +17,6 @@ class Segmentation:
         hsv = openCV.cvtColor(blur, openCV.COLOR_BGR2HSV) # Converte para o espaco HSV
         
         mask = openCV.inRange(hsv, min, max) # cria mascara 
-        mask = openCV.bitwise_not(mask) # inverte a mascara
         
         return mask
     
@@ -39,17 +38,16 @@ class Segmentation:
     def chromaKey(cls, image, background, min, max):
         
         # cria mascara 
-        mask = Segmentation.byColor(image, min, max)
+        mask_background = Segmentation.byColor(image, min, max)
         
-        # complemento da mascara
-        mask_not = openCV.bitwise_not(mask)
+        mask_front = openCV.bitwise_not(mask_background)
         
         # normaliza as mascaras para valores 0 e 1 
-        mask = numpy.array(mask >= 1).astype("uint8")
-        mask_not = numpy.array(mask_not >= 1).astype("uint8")
+        mask_front = numpy.array(mask_front >= 1).astype("uint8")
+        mask_background = numpy.array(mask_background >= 1).astype("uint8")
         
-        mask = Segmentation.maskMulti(image, mask)
-        mask_not = Segmentation.maskMulti(background, mask_not) 
+        mask = Segmentation.maskMulti(image, mask_front)
+        mask_not = Segmentation.maskMulti(background, mask_background) 
         
         result = mask | mask_not # type: ignore
         

@@ -1,0 +1,2 @@
+class UnableOpenWebcam(RuntimeError):
+    pass

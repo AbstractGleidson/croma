@@ -1,5 +1,5 @@
 [project]
-name="Chroma"
+name="segmentation"
 version="1.0.0"
 description="Simple croma for segmentation of background from images"
 requires-python=">=3.11"
@@ -10,7 +10,7 @@ dependencies=[
 ]
 
 [project.scripts]
-chroma = "chroma.cli.commands:chroma"
+seg = "segmentation.cli.commands:seg"
 
 [build-system]
 requires = ["flit-core<4"]
