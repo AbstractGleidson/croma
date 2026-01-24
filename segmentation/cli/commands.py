@@ -4,6 +4,7 @@ from segmentation.src.getColor import GetColor
 from segmentation.src.chroma.chromaImage import chromaImage
 from segmentation.src.chroma.chromaWebcam import chromaWebcam
 from segmentation.src.segObject import segObject
+from segmentation.exeptions import ImageNotFound, ColorNotSelected, ColorNotFound, UnableOpenWebcam
 
 @click.group()
 def seg():
@@ -17,20 +18,29 @@ def seg():
 @click.option("-v", "--verbose", is_flag=True)
 def chroma(front, back, color, save, verbose):
     
-    if front is not None:
-        image_path = getPath(front)
-        
-        back_path = back
-        if back_path is not None:
-            back_path = getPath(back_path)
-        
-        chromaImage(image_path, back_path, color, save, verbose)
+    try:
+        if front is not None:
+            image_path = getPath(front)
+            
+            back_path = back
+            if back_path is not None:
+                back_path = getPath(back_path)
+            
+            chromaImage(image_path, back_path, color, save, verbose)
 
-    else:
-        click.echo("Utilize o parâmetro --image para definir o caminho da image para aplicar o filtro")
-        click.echo("exemplo: ")
-        click.echo("\n\tchrome image --image=path\n")
-        click.echo("path deve ser o caminho onde está a sua imagem.")
+        else:
+            click.echo("Utilize o parâmetro --image para definir o caminho da image para aplicar o filtro")
+            click.echo("exemplo: ")
+            click.echo("\n\tchrome image --image=path\n")
+            click.echo("path deve ser o caminho onde está a sua imagem.")
+    except ImageNotFound as error:
+        click.echo(error)
+    
+    except ColorNotSelected as error:
+        click.echo(error)
+        
+    except ColorNotFound as error:
+        click.echo(error)
         
 @click.command()
 @click.option("-i", "--image", default=None, help="Caminho da imagem que deseja aplicar o efeito.", type=str)
@@ -39,16 +49,25 @@ def chroma(front, back, color, save, verbose):
 @click.option("-v", "--verbose", is_flag=True)
 def object(image, color, save, verbose):
     
-    if image is not None:
-        image_path = getPath(image)
-        
-        segObject(image_path, color, save, verbose)
+    try:
+        if image is not None:
+            image_path = getPath(image)
+            
+            segObject(image_path, color, save, verbose)
 
-    else:
-        click.echo("Utilize o parâmetro --image para definir o caminho da image para aplicar o filtro")
-        click.echo("exemplo: ")
-        click.echo("\n\tchrome image --image=path\n")
-        click.echo("path deve ser o caminho onde está a sua imagem.")
+        else:
+            click.echo("Utilize o parâmetro --image para definir o caminho da image para aplicar o filtro")
+            click.echo("exemplo: ")
+            click.echo("\n\tchrome image --image=path\n")
+            click.echo("path deve ser o caminho onde está a sua imagem.")
+    except ImageNotFound as error:
+        click.echo(error)
+    
+    except ColorNotFound as error:
+        click.echo(error)
+    
+    except ColorNotSelected as error:
+        click.echo(error)
 
 @click.command()
 @click.option("--webcam", default=0, help="Index da webcam. Por padrão é 0.", type=int)
@@ -57,7 +76,17 @@ def object(image, color, save, verbose):
 @click.option("--h", default=640, help="Altura da janela. Por padrão 640px.", type=int)
 @click.option("--w", default=480, help="Largura da janela. Por padrao 480px", type=int)
 def webcam(webcam, back, color, h, w):
-    chromaWebcam(webcam, back, color, h, w)
+    try:
+        chromaWebcam(webcam, back, color, h, w)
+    except UnableOpenWebcam as error:
+        click.echo(error)
+    
+    except ImageNotFound as error:
+        click.echo(error)
+    
+    except ColorNotFound as error:
+        click.echo(error)
+        
     
 @click.command()
 @click.option("-i", "--image", default=None, help="Imagem para estudar a cor.", type=str)

@@ -33,10 +33,14 @@ def chromaWebcam(webcam: int, background:str, color:str, height:int, width:int):
                 interpolation=openCV.INTER_CUBIC
             )
         
-        if color.lower() in ["green", "red", "blue"]:
+        if color is None:
+            col = readColorYaml("green") 
+        
+        elif color.lower() in ["green", "red", "blue"]:
             col = readColorYaml(color.lower())
+            
         else:
-            col = readColorYaml("green")   
+            raise ColorNotFound(f"A cor {color} não existe.")  
             
         while(True):
             

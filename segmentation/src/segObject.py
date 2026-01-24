@@ -22,7 +22,7 @@ def segObject(imagePath:str, color:str, save:bool, verbose:bool):
         col = GetColor.getColor(img)
         
         if col is None:
-            raise ColorNotSelected("A cor não foi selecionada.")
+            raise ColorNotSelected("Nenhuma cor selecionada.")
         
     elif color.lower() in ["green", "red", "blue"]:
         col = readColorYaml(color.lower())

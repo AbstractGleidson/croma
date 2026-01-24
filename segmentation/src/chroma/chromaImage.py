@@ -40,7 +40,7 @@ def chromaImage(imagePath:str, background:str, color:str, save:bool, verbose:boo
         back = openCV.imread(background)
             
         if back is None:
-            raise FileNotFoundError("O arquivo do plano de fundo não foi encontrado!")
+            raise ImageNotFound("O arquivo do plano de fundo não foi encontrado!")
             
         back = openCV.resize(
             back,
