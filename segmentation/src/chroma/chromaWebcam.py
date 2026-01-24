@@ -1,6 +1,4 @@
-from segmentation.exeptions.colorNotFound import ColorNotFound
-from segmentation.exeptions.colorNotSelected import ColorNotSelected
-from segmentation.exeptions.unableOpenWebcam import UnableOpenWebcam
+from segmentation.exeptions import ColorNotFound, UnableOpenWebcam
 from segmentation.src.getColor import GetColor
 from segmentation.src.utils import readColorYaml
 from segmentation.src.segmentation import Segmentation

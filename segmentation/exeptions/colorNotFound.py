@@ -1,2 +1,0 @@
-class ColorNotFound(RuntimeError):
-    pass

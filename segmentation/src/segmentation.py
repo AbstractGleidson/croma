@@ -33,6 +33,19 @@ class Segmentation:
         result = openCV.merge((c1, c2, c3))
         
         return result
+    
+    @classmethod
+    def segObject(cls, image, min, max):
+    
+        # cria mascara 
+        mask = Segmentation.byColor(image, min, max)
+    
+        # normaliza as mascaras para valores 0 e 1 
+        mask = numpy.array(mask >= 1).astype("uint8")
+        
+        result = Segmentation.maskMulti(image, mask)
+        
+        return result
 
     @classmethod
     def chromaKey(cls, image, background, min, max):
@@ -46,9 +59,9 @@ class Segmentation:
         mask_front = numpy.array(mask_front >= 1).astype("uint8")
         mask_background = numpy.array(mask_background >= 1).astype("uint8")
         
-        mask = Segmentation.maskMulti(image, mask_front)
-        mask_not = Segmentation.maskMulti(background, mask_background) 
+        mask_front = Segmentation.maskMulti(image, mask_front)
+        mask_background = Segmentation.maskMulti(background, mask_background) 
         
-        result = mask | mask_not # type: ignore
+        result = mask_front | mask_background # type: ignore
         
         return result   

@@ -1,2 +1,0 @@
-class UnableOpenWebcam(RuntimeError):
-    pass

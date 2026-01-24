@@ -1,2 +1,0 @@
-class ColorNotSelected(RuntimeError):
-    pass

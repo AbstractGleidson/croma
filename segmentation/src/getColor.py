@@ -83,9 +83,7 @@ class GetColor:
         
 
     @classmethod
-    def getColor(cls, imagePath):
-        
-        image = openCV.imread(imagePath)
+    def getColor(cls, image):
         
         if image is not None:
             cls._x_start, cls._y_start, cls._x_end, cls._y_end = 0, 0, 0, 0

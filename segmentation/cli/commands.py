@@ -3,6 +3,7 @@ from segmentation.src.utils import getPath
 from segmentation.src.getColor import GetColor
 from segmentation.src.chroma.chromaImage import chromaImage
 from segmentation.src.chroma.chromaWebcam import chromaWebcam
+from segmentation.src.segObject import segObject
 
 @click.group()
 def seg():
@@ -22,6 +23,22 @@ def image(front, back, color):
             back_path = getPath(back_path)
         
         chromaImage(image_path, back_path, color)
+
+    else:
+        click.echo("Utilize o parâmetro --image para definir o caminho da image para aplicar o filtro")
+        click.echo("exemplo: ")
+        click.echo("\n\tchrome image --image=path\n")
+        click.echo("path deve ser o caminho onde está a sua imagem.")
+        
+@click.command()
+@click.option("--image", default=None, help="Caminho da imagem que deseja aplicar o efeito.")
+@click.option("--color", default=None, help="Cor do plano de fudo da imagem. No caso default abre uma janela pra escolha da cor.")
+def object(image, color):
+    
+    if image is not None:
+        image_path = getPath(image)
+        
+        segObject(image_path, color)
 
     else:
         click.echo("Utilize o parâmetro --image para definir o caminho da image para aplicar o filtro")
@@ -66,3 +83,4 @@ def color(image):
 seg.add_command(color)
 seg.add_command(image)
 seg.add_command(webcam)
+seg.add_command(object)

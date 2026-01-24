@@ -1,32 +1,32 @@
-from segmentation.exeptions.colorNotFound import ColorNotFound
-from segmentation.exeptions.colorNotSelected import ColorNotSelected
+from segmentation.exeptions import ColorNotFound, ColorNotSelected, ImageNotFound
 from segmentation.src.getColor import GetColor
-from segmentation.src.utils import readColorYaml
+from segmentation.src.utils import readColorYaml, getPath
 from segmentation.src.segmentation import Segmentation
 import cv2 as openCV
 import numpy 
 
-def chromaImage(image, background, color):
+def chromaImage(imagePath, background, color):
     
-    # Leitura da cor 
-    if color is None:
-        color = GetColor.getColor(image)
+    path = getPath(imagePath)
     
-        if color is None:
-            raise ColorNotSelected("Você não selecinou uma cor.")
-        
-        col = color.copy()
-        
-    elif color.lower() in ["green", "blue", "red"]:
-        col = readColorYaml("green")
-    
-    else:
-        raise ColorNotFound("Cor passada como parâmetro não foi encontrada.")
-    
-    img = openCV.imread(image)
+    img = openCV.imread(
+        path
+    )
     
     if img is None:
-        raise FileNotFoundError("O arquivo da imagem para aplicar o filtro não foi encontrado!")
+        raise ImageNotFound(f"Não foi possível abrir a imagem. Verifique o caminho: {path}")  
+    
+    if color is None:
+        col = GetColor.getColor(img)
+        
+        if col is None:
+            raise ColorNotSelected("A cor não foi selecionada.")
+        
+    elif color.lower() in ["green", "red", "blue"]:
+        col = readColorYaml(color.lower())
+        
+    else:
+        raise ColorNotFound(f'A cor "{color}" não existe.')       
     
     height, width = img.shape[:2]
         
