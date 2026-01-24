@@ -32,6 +32,17 @@ class GetColor:
             cls._endDrawing = True
             
             if cls._x_start != cls._x_end and cls._y_start != cls._y_end: # Pega retangulos
+                
+                if cls._x_start > cls._x_end:
+                    temp = cls._x_start
+                    cls._x_start = cls._x_end
+                    cls._x_end = temp
+                
+                if cls._y_start > cls._y_end:
+                    temp = cls._y_start
+                    cls._y_start = cls._y_end
+                    cls._y_end = temp
+                
                 cls._rectangles.append({"start": (cls._x_start, cls._y_start), "end": (cls._x_end, cls._y_end)})
                 cls._react = True
                 
