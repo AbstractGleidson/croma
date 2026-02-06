@@ -1,70 +1,213 @@
-# Módulo Segmentation
-O módulo Segmentation é uma ferramenta voltada para experimentação de técnicas de segmentação por cor, permitindo isolar objetos, aplicar chroma key e analisar cores em imagens e vídeo.
+# Módulo Segmentation: Ferramenta de Segmentação por Cor
+Este pacote fornece uma **CLI (Command Line Interface)** para segmentação de imagens e vídeo baseada em cores no espaço **HSV**, permitindo:
 
-# Funcionalidades
+* **Chroma key** em imagens e webcam
+* **Segmentação de objetos por cor**
+* **Leitura interativa de cores** diretamente da imagem
 
-- Chroma key em imagens
+Ele é útil para testes de segmentação.
 
-- Chroma key em tempo real (webcam)
+---
 
-- Segmentação de objetos por cor
+## Instalação
 
-- Leitura de cor (HSV) a partir de imagens
+clone do repositório:
 
-
-# chroma
-Aplica o efeito chroma key em uma imagem, removendo uma cor específica e substituindo por um fundo.
-
-```bash
-seg chroma --front=path --back=path --color=color
-```
-
-Parâmetros principais:
-
-- ``--front``: imagem principal
-- ``--back``: imagem de fundo (opcional)
-- ``--color``: cor a ser removida (opcional)
-
-
-# object
-Segmenta um objeto em uma imagem com base em uma cor selecionada.
-
-```bash
-seg object --image=path --color=color
-```
-Esse comando é utilizado para isolar regiões da imagem que correspondem à cor informada.
-
-# webcam 
-Aplica o efeito chroma key em tempo real utilizando a webcam.
-```bash
-seg webcam --back=path --color=color
-```
-Permite substituir o fundo capturado pela câmera por uma imagem ou por uma cor sólida.
-
-# Color 
-Realiza a leitura de uma cor em uma imagem e exibe os valores no espaço de cores HSV.
-
-```
-seg color --image=path
-```
-
-
-# Instalação
-
-```
+```bash 
 git clone "https://github.com/AbstractGleidson/croma.git"
 
 cd croma 
 
-python -m venv .env
+pip install .
+```
 
-# Linux/Mac
-source .env/bin/activate
+Após instalar o pacote (via `pip install`), o comando principal disponível será:
 
-# Windows
-.env\Scripts\activate
+```bash
+seg
+```
 
-pip install -e .
+Para ver todos os comandos disponíveis:
 
+```bash
 seg --help
 ```
+
+---
+
+## Estrutura Geral da CLI
+
+```text
+seg
+├── chroma   # Chroma key em imagens
+├── object   # Segmentação de objetos por cor
+├── webcam   # Chroma key em tempo real (webcam)
+└── color    # Leitura interativa de cor (HSV)
+```
+
+---
+
+## Seg color
+
+### Descrição
+
+Abre uma janela interativa para **seleção manual de uma cor** em uma imagem.
+Você pode selecionar **pontos** ou **regiões retangulares**, e o sistema calcula automaticamente os **valores mínimo e máximo em HSV**.
+
+Ideal para descobrir os limites corretos de uma cor antes de usar segmentação ou chroma key.
+
+### Uso
+
+```bash
+seg color --image imagem.png
+```
+
+### Controles da janela
+
+* **Clique simples**: seleciona um ponto
+* **Clique + arraste**: seleciona um retângulo
+* **s**: salvar seleção
+* **r**: limpar seleções
+* **q**: sair sem salvar
+
+### Saída
+
+Exemplo:
+
+```text
+Valores mínimos:
+  hue - 35
+  saturation - 80
+  value - 60
+
+Valores máximos:
+  hue - 85
+  saturation - 255
+  value - 255
+```
+
+---
+
+## seg chroma
+
+### Descrição
+
+Aplica o efeito **chroma key** em uma imagem, removendo o fundo baseado em uma cor selecionada.
+
+Você pode:
+
+* Escolher a cor manualmente
+* Usar uma cor pré-definida
+* Substituir o fundo por outra imagem ou por uma cor sólida
+
+### Uso
+
+```bash
+seg chroma --front pessoa.png
+```
+
+### Opções
+
+| Opção           | Descrição                      |
+| --------------- | ------------------------------ |
+| `-f, --front`   | Imagem principal (obrigatória) |
+| `-b, --back`    | Imagem de fundo                |
+| `-c, --color`   | Cor do fundo (green, blue, red) |
+| `-s, --save`    | Salva a imagem final           |
+| `-v, --verbose` | Exibe valores HSV usados       |
+
+
+### Observação
+O parâmetro `--color` aceita apenas as cores base:
+
+- green
+- red
+- blue
+
+Caso nenhuma cor seja informada, o comando abre automaticamente a janela interativa de seleção de cor, funcionando da mesma forma que o comando seg color.
+
+### Exemplos
+
+```bash
+seg chroma --front pessoa.png --back fundo.jpg --save
+```
+
+```bash
+seg chroma --front pessoa.png --color green --verbose
+```
+
+---
+
+## seg object
+
+### Descrição
+
+Segmenta um **objeto específico** em uma imagem com base em uma cor selecionada.
+
+O resultado é uma imagem onde apenas regiões da cor escolhida permanecem visíveis.
+O comando abre um janela de seleção para a cor do objeto de interesse.
+
+### Uso
+
+```bash
+seg object --image objeto.png
+```
+
+### Opções
+
+| Opção           | Descrição                       |
+| --------------- | ------------------------------- |
+| `-i, --image`   | Imagem de entrada (obrigatória) |
+| `-s, --save`    | Salva o resultado               |
+| `-v, --verbose` | Exibe valores HSV               |
+
+### Exemplos
+
+```bash
+seg object --image objeto.png --save
+```
+
+```bash
+seg object --image objeto.png --verbose
+```
+
+---
+
+## seg webcam
+
+### Descrição
+
+Aplica **chroma key em tempo real** usando a webcam.
+
+Você pode substituir o fundo da câmera por:
+
+* Uma imagem
+* Uma cor sólida
+
+### Uso
+
+```bash
+seg webcam
+```
+
+### Opções
+
+| Opção      | Descrição                     |
+| ---------- | ----------------------------- |
+| `--webcam` | Índice da webcam (default: 0) |
+| `--back`   | Imagem de fundo               |
+| `--color`  | Cor do fundo (default: green) |
+| `--h`      | Altura da janela              |
+| `--w`      | Largura da janela             |
+
+### Exemplos
+
+```bash
+seg webcam --color green
+```
+
+```bash
+seg webcam --back fundo.jpg --w 800 --h 600
+```
+
+---

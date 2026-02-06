@@ -94,12 +94,6 @@ def chroma(front: str, back, color:str, save:bool, verbose: bool):
     help="Caminho para a imagem na qual o efeito será aplicado."
 )
 @click.option(
-    "-c", "--color",
-    default=None,
-    type=str,
-    help="Cor do plano de fundo. Se não for informada, uma janela será aberta para a escolha da cor."
-)
-@click.option(
     "-s", "--save",
     is_flag=True,
     help="Salva a imagem resultado."
