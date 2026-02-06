@@ -194,7 +194,6 @@ def webcam(webcam, back, color, h, w):
         seg color --image imagem.png
     """
 )
-
 @click.option(
     "-i", "--image",
     required=True,
@@ -205,10 +204,10 @@ def color(image):
     
     
     img = openCV.imread(
-        getPath(image)
+        getPath(image)  
     )
     
-    if img is not None:
+    try:
         color = GetColor.getColor(
             img
         )
@@ -222,8 +221,8 @@ def color(image):
         else:
             click.echo("Você não selecionou nenhuma cor.")    
             
-    else:
-        click.echo("Imagem não foi encontrada.")
+    except ImageNotFound as error:
+        raise click.ClickException(str(error)) 
 
 seg.add_command(color)
 seg.add_command(chroma)
