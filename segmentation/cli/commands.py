@@ -24,10 +24,9 @@ def seg():
         seg chroma --front pessoa.png --color green --save
     """
 )
-
 @click.option(
     "-f", "--front",
-    default=None,
+    required=True,
     type=str,
     help="Caminho para a imagem principal (foreground) que receberá o efeito."
 )
@@ -53,24 +52,16 @@ def seg():
     is_flag=True,
     help="Exibe os parâmetros de cor usado na segmentação no espaço de cores HSV."
 )
-def chroma(front, back, color, save, verbose):
+def chroma(front: str, back, color:str, save:bool, verbose: bool):
     
     try:
-        if front is not None:
-            image_path = getPath(front)
+        image_path = getPath(front)
             
-            back_path = back
-            if back_path is not None:
-                back_path = getPath(back_path)
+        back_path = back
+        if back_path is not None:
+            back_path = getPath(back_path)
             
-            chromaImage(image_path, back_path, color, save, verbose)
-
-        else:
-            click.echo("Nenhuma imagem foi informada.\n")
-            click.echo("Utilize o parâmetro --front para definir o caminho da imagem na qual o filtro será aplicado.\n")
-            click.echo("Exemplo de uso:")
-            click.echo("\tseg chroma --front=caminho/para/imagem.png\n")
-            click.echo("Substitua 'caminho/para/imagem.png' pelo local onde sua imagem está salva.")
+        chromaImage(image_path, back_path, color, save, verbose)
 
     except ImageNotFound as error:
         click.echo(error)
@@ -98,7 +89,7 @@ def chroma(front, back, color, save, verbose):
 
 @click.option(
     "-i", "--image",
-    default=None,
+    required=True,
     type=str,
     help="Caminho para a imagem na qual o efeito será aplicado."
 )
@@ -118,21 +109,12 @@ def chroma(front, back, color, save, verbose):
     is_flag=True,
     help="Exibe os parâmetros de cor usado na segmentação no espaço de cores HSV."
 )
-def object(image, color, save, verbose):
+def object(image: str, color: str, save:bool, verbose:bool):
     
     try:
-        if image is not None:
-            image_path = getPath(image)
+        image_path = getPath(image)
             
-            segObject(image_path, color, save, verbose)
-
-        else:
-            click.echo("Nenhuma imagem foi informada.\n")
-            click.echo("Utilize o parâmetro --image para definir o caminho da imagem na qual o filtro será aplicado.\n")
-            click.echo("Exemplo de uso:")
-            click.echo("\tseg object --image=caminho/para/imagem.png\n")
-            click.echo("Substitua 'caminho/para/imagem.png' pelo local onde sua imagem está salva.")
-            
+        segObject(image_path, color, save, verbose)
     except ImageNotFound as error:
         click.echo(error)
     
@@ -215,40 +197,33 @@ def webcam(webcam, back, color, h, w):
 
 @click.option(
     "-i", "--image",
-    default=None,
+    required=True,
     type=str,
     help="Caminho para a imagem que será utilizada para análise de cor."
 )
 def color(image):
     
-    if image is not None:
-        img = openCV.imread(
-            getPath(image)
-        )
     
-        if img is not None:
-            color = GetColor.getColor(
-                img
-            )
+    img = openCV.imread(
+        getPath(image)
+    )
+    
+    if img is not None:
+        color = GetColor.getColor(
+            img
+        )
             
-            if color is not None:
-                click.echo("A cor lidar na escala HSV foi: ")
-                click.echo(f"\nValores minimos: ")
-                click.echo(f"\thue - {color["min"][0]}\n\tsaturation - {color["min"][1]}\n\tvalue - {color["min"][2]}")
-                click.echo(f"\nValores máximos: ")
-                click.echo(f"\thue - {color["max"][0]}\n\tsaturation - {color["max"][1]}\n\tvalue - {color["max"][2]}")
-            else:
-                click.echo("Você não selecionou nenhuma cor.")
-            
-            
+        if color is not None:
+            click.echo("A cor lidar na escala HSV foi: ")
+            click.echo(f"\nValores minimos: ")
+            click.echo(f"\thue - {color['min'][0]}\n\tsaturation - {color['min'][1]}\n\tvalue - {color['min'][2]}")
+            click.echo(f"\nValores máximos: ")
+            click.echo(f"\thue - {color['max'][0]}\n\tsaturation - {color['max'][1]}\n\tvalue - {color['max'][2]}")
         else:
-            click.echo("Imagem não foi encontrada.")
+            click.echo("Você não selecionou nenhuma cor.")    
+            
     else:
-        click.echo("Nenhuma imagem foi informada.\n")
-        click.echo("Utilize o parâmetro --image para definir o caminho da imagem que será estudada.\n")
-        click.echo("Exemplo de uso:")
-        click.echo("\tseg color --image=caminho/para/imagem.png\n")
-        click.echo("Substitua 'caminho/para/imagem.png' pelo local onde sua imagem está salva.")
+        click.echo("Imagem não foi encontrada.")
 
 seg.add_command(color)
 seg.add_command(chroma)
