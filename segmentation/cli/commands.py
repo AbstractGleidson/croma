@@ -64,13 +64,13 @@ def chroma(front: str, back, color:str, save:bool, verbose: bool):
         chromaImage(image_path, back_path, color, save, verbose)
 
     except ImageNotFound as error:
-        click.echo(error)
+        raise click.ClickException(str(error))
     
     except ColorNotSelected as error:
-        click.echo(error)
+        raise click.ClickException(str(error))
         
     except ColorNotFound as error:
-        click.echo(error)
+        raise click.ClickException(str(error))
         
         
 @click.command(
@@ -116,13 +116,13 @@ def object(image: str, color: str, save:bool, verbose:bool):
             
         segObject(image_path, color, save, verbose)
     except ImageNotFound as error:
-        click.echo(error)
+        raise click.ClickException(str(error))
     
     except ColorNotFound as error:
-        click.echo(error)
+        raise click.ClickException(str(error))
     
     except ColorNotSelected as error:
-        click.echo(error)
+        raise click.ClickException(str(error))
 
 @click.command(
     help=
@@ -173,13 +173,13 @@ def webcam(webcam, back, color, h, w):
     try:
         chromaWebcam(webcam, back, color, h, w)
     except UnableOpenWebcam as error:
-        click.echo(error)
+        raise click.ClickException(str(error))
     
     except ImageNotFound as error:
-        click.echo(error)
+        raise click.ClickException(str(error))
     
     except ColorNotFound as error:
-        click.echo(error)
+        raise click.ClickException(str(error))
         
     
 @click.command(
