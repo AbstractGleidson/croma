@@ -52,14 +52,19 @@ def seg():
     is_flag=True,
     help="Exibe os parâmetros de cor usado na segmentação no espaço de cores HSV."
 )
-def chroma(front: str, back, color:str, save:bool, verbose: bool):
+@click.option(
+    "-a", "--assets",
+    is_flag=True,
+    help="Procura os arquivos diretamente na pasta assets."
+)
+def chroma(front: str, back, color:str, save:bool, verbose: bool, assets:bool):
     
     try:
-        image_path = getPath(front)
-            
-        back_path = back
+        image_path = getPath(front, assets)
+        
+        back_path = back 
         if back_path is not None:
-            back_path = getPath(back_path)
+            back_path = getPath(back_path, assets)
             
         chromaImage(image_path, back_path, color, save, verbose)
 
@@ -103,10 +108,15 @@ def chroma(front: str, back, color:str, save:bool, verbose: bool):
     is_flag=True,
     help="Exibe os parâmetros de cor usado na segmentação no espaço de cores HSV."
 )
-def object(image: str, save:bool, verbose:bool):
+@click.option(
+    "-a", "--assets",
+    is_flag=True,
+    help="Procura os arquivos diretamente na pasta assets."
+)
+def object(image: str, save:bool, verbose:bool, assets:bool):
     
     try:
-        image_path = getPath(image)
+        image_path = getPath(image, assets)
             
         segObject(image_path, save, verbose)
     except ImageNotFound as error:
@@ -163,9 +173,19 @@ def object(image: str, save:bool, verbose:bool):
     type=int,
     help="Largura da janela em pixels. Por padrão, 480."
 )
-def webcam(webcam, back, color, h, w):
+@click.option(
+    "-a", "--assets",
+    is_flag=True,
+    help="Procura os arquivos diretamente na pasta assets."
+)
+def webcam(webcam, back, color, h, w, assets):
     try:
-        chromaWebcam(webcam, back, color, h, w)
+        back_path = back
+        
+        if back_path is not None:
+            back_path = getPath(back_path, assets) 
+        
+        chromaWebcam(webcam, back_path, color, h, w)
     except UnableOpenWebcam as error:
         raise click.ClickException(str(error))
     
@@ -194,11 +214,16 @@ def webcam(webcam, back, color, h, w):
     type=str,
     help="Caminho para a imagem que será utilizada para análise de cor."
 )
-def color(image):
+@click.option(
+    "-a", "--assets",
+    is_flag=True,
+    help="Procura os arquivos diretamente na pasta assets."
+)
+def color(image:str, assets:bool):
     
     
     img = openCV.imread(
-        getPath(image)  
+        getPath(image, assets)  
     )
     
     try:

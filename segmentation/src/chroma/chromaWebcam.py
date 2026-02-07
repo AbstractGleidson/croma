@@ -29,7 +29,7 @@ def chromaWebcam(webcam: int, background:str, color:str, height:int, width:int):
             
             back = openCV.resize(
                 back,
-                (width, height),
+                (height, width),
                 interpolation=openCV.INTER_CUBIC
             )
         
@@ -57,7 +57,7 @@ def chromaWebcam(webcam: int, background:str, color:str, height:int, width:int):
                 
                 #openCV.imshow("Frame", frame)
                 openCV.imshow("Chroma", mask)
-                #openCV.imshow("Plano de fundo", background)
+                #openCV.imshow("Plano de fundo", back)
                 
                 key = openCV.waitKey(1) & 0xFF
                 
