@@ -103,12 +103,12 @@ def chroma(front: str, back, color:str, save:bool, verbose: bool):
     is_flag=True,
     help="Exibe os parâmetros de cor usado na segmentação no espaço de cores HSV."
 )
-def object(image: str, color: str, save:bool, verbose:bool):
+def object(image: str, save:bool, verbose:bool):
     
     try:
         image_path = getPath(image)
             
-        segObject(image_path, color, save, verbose)
+        segObject(image_path, save, verbose)
     except ImageNotFound as error:
         raise click.ClickException(str(error))
     

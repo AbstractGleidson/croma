@@ -7,7 +7,7 @@ import click
 from pathlib import Path
 import os
 
-def segObject(imagePath:str, color:str, save:bool, verbose:bool):
+def segObject(imagePath:str, save:bool, verbose:bool):
     
     path = getPath(imagePath)
     
@@ -17,18 +17,11 @@ def segObject(imagePath:str, color:str, save:bool, verbose:bool):
     
     if img is None:
         raise ImageNotFound(f"Não foi possível abrir a imagem. Verifique o caminho: {path}")  
-    
-    if color is None:
-        col = GetColor.getColor(img)
+   
+    col = GetColor.getColor(img)
         
-        if col is None:
-            raise ColorNotSelected("Nenhuma cor selecionada.")
-        
-    elif color.lower() in ["green", "red", "blue"]:
-        col = readColorYaml(color.lower())
-        
-    else:
-        raise ColorNotFound(f"A cor {color} não existe.")       
+    if col is None:
+        raise ColorNotSelected("Nenhuma cor selecionada.")     
     
     segImage = Segmentation.segObject(img, col["min"], col["max"])
     
