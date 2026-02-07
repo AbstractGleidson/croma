@@ -13,6 +13,13 @@ def seg():
 
 @click.command(
     help=
+    """Comando para sinalizar o funcionamento do módulo."""
+)
+def hello():
+    click.secho("Módulo segmentation funcionando!", fg="green")
+
+@click.command(
+    help=
     """
         Aplica o efeito chroma key em uma imagem.
 
@@ -243,6 +250,7 @@ def color(image:str, assets:bool):
     except ImageNotFound as error:
         raise click.ClickException(str(error)) 
 
+seg.add_command(hello)
 seg.add_command(color)
 seg.add_command(chroma)
 seg.add_command(webcam)

@@ -18,7 +18,7 @@ git clone "https://github.com/AbstractGleidson/croma.git"
 
 cd croma 
 
-pip install .
+pip install -e .
 ```
 
 Após instalar o pacote (via `pip install`), o comando principal disponível será:
@@ -115,6 +115,7 @@ seg chroma --front pessoa.png
 | `-c, --color`   | Cor do fundo (green, blue, red) |
 | `-s, --save`    | Salva a imagem final           |
 | `-v, --verbose` | Exibe valores HSV usados       |
+| `-a, --assets`  | Procura as imagens na pasta assets do repositório
 
 
 ### Observação
@@ -160,6 +161,7 @@ seg object --image objeto.png
 | `-i, --image`   | Imagem de entrada (obrigatória) |
 | `-s, --save`    | Salva o resultado               |
 | `-v, --verbose` | Exibe valores HSV               |
+| `-a, --assets`  | Procura as imagens na pasta assets do repositório
 
 ### Exemplos
 
@@ -199,6 +201,7 @@ seg webcam
 | `--color`  | Cor do fundo (default: green) |
 | `--h`      | Altura da janela              |
 | `--w`      | Largura da janela             |
+| `-a, --assets`  | Procura as imagens na pasta assets do repositório
 
 ### Exemplos
 
@@ -211,3 +214,46 @@ seg webcam --back fundo.jpg --w 800 --h 600
 ```
 
 ---
+
+# Exemplos com assets do repositório
+A seguir estão alguns exemplos utilizando imagens da pasta `assets/` do repositório
+para demonstrar casos de uso da ferramenta de segmentação.
+
+## 1. Chroma key segmentando a cor verde
+
+```bash 
+seg chroma -a --front=bandeira.jpeg --back=fundo.jpeg --color=green
+```
+
+### Imagem original
+![Bandeira do Brasil](assets/bandeira.jpeg)
+
+### Imagem segmentada
+![Bandeira do Brasil com a cor verde segmentado](assets/seg_verde_bandeira.jpeg)
+
+## 2. Chroma key segmentando a cor azul
+
+```bash 
+seg chroma -a --front=bandeira.jpeg --back=fundo.jpeg --color=blue
+```
+
+### Imagem original
+![Bandeira do Brasil](assets/bandeira.jpeg)
+
+### Imagem segmentada
+![Bandeira do Brasil com a cor verde segmentado](assets/seg_azul_bandeira.jpeg)
+
+## 3. Segmentação de objeto por seleção manual de cor
+
+```bash 
+seg object -a --image=celulas.jpeg
+```
+
+### Imagem original
+![Bandeira do Brasil](assets/celulas.jpeg)
+
+### Seleção do objeto de interesse
+![Seleção](assets/celulas_selecao.png)
+
+### Imagem segmentada
+![Bandeira do Brasil com a cor verde segmentado](assets/seg_celulas.jpeg)
