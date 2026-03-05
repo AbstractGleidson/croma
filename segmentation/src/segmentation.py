@@ -35,15 +35,24 @@ class Segmentation:
         return result
     
     @classmethod
-    def segObject(cls, image, min, max):
+    def segObject(cls, image, black, min, max):
     
         # cria mascara 
         mask = Segmentation.byColor(image, min, max)
     
         # normaliza as mascaras para valores 0 e 1 
-        mask = numpy.array(mask >= 1).astype("uint8")
+        mask_bin = numpy.array(mask >= 1).astype("uint8")
+        result = Segmentation.maskMulti(image, mask_bin)
         
-        result = Segmentation.maskMulti(image, mask)
+        if not black:
+            mask_inv = openCV.bitwise_not(mask)
+            
+            return openCV.add(
+                result, 
+                openCV.merge(
+                    (mask_inv, mask_inv,mask_inv)
+                )
+            )
         
         return result
 

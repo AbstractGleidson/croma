@@ -7,7 +7,7 @@ import click
 from pathlib import Path
 import os
 
-def segObject(imagePath:str, save:bool, verbose:bool):
+def segObject(imagePath:str, black:bool, save:bool, verbose:bool):
     
     path = getPath(imagePath)
     
@@ -23,7 +23,7 @@ def segObject(imagePath:str, save:bool, verbose:bool):
     if col is None:
         raise ColorNotSelected("Nenhuma cor selecionada.")     
     
-    segImage = Segmentation.segObject(img, col["min"], col["max"])
+    segImage = Segmentation.segObject(img, black, col["min"], col["max"])
     
     #openCV.imshow("Imagem", img)
     openCV.imshow("Objeto segmentado", segImage)

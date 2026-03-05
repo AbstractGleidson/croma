@@ -5,6 +5,7 @@ from segmentation.src.getColor import GetColor
 from segmentation.src.chroma.chromaImage import chromaImage
 from segmentation.src.chroma.chromaWebcam import chromaWebcam
 from segmentation.src.segObject import segObject
+from segmentation.src.cicleDetect import smoothDetect
 from segmentation.exeptions import ImageNotFound, ColorNotSelected, ColorNotFound, UnableOpenWebcam
 
 @click.group(help="Ferramenta de segmentação de imagens e vídeo usando cores (chroma key, segmentação e análise HSV).")
@@ -32,7 +33,7 @@ def hello():
     """
 )
 @click.option(
-    "-f", "--front",
+    "-i", "--image",
     required=True,
     type=str,
     help="Caminho para a imagem principal (foreground) que receberá o efeito."
@@ -64,10 +65,10 @@ def hello():
     is_flag=True,
     help="Procura os arquivos diretamente na pasta assets."
 )
-def chroma(front: str, back, color:str, save:bool, verbose: bool, assets:bool):
+def back(image: str, back, color:str, save:bool, verbose: bool, assets:bool):
     
     try:
-        image_path = getPath(front, assets)
+        image_path = getPath(image, assets)
         
         back_path = back 
         if back_path is not None:
@@ -106,6 +107,11 @@ def chroma(front: str, back, color:str, save:bool, verbose: bool, assets:bool):
     help="Caminho para a imagem na qual o efeito será aplicado."
 )
 @click.option(
+    "-b", "--black",
+    is_flag=True,
+    help="Se o plano de fundo da imagem final deve ser preto."
+)
+@click.option(
     "-s", "--save",
     is_flag=True,
     help="Salva a imagem resultado."
@@ -120,12 +126,12 @@ def chroma(front: str, back, color:str, save:bool, verbose: bool, assets:bool):
     is_flag=True,
     help="Procura os arquivos diretamente na pasta assets."
 )
-def object(image: str, save:bool, verbose:bool, assets:bool):
+def object(image: str, black:bool, save:bool, verbose:bool, assets:bool):
     
     try:
         image_path = getPath(image, assets)
             
-        segObject(image_path, save, verbose)
+        segObject(image_path, black, save, verbose)
     except ImageNotFound as error:
         raise click.ClickException(str(error))
     
@@ -185,7 +191,7 @@ def object(image: str, save:bool, verbose:bool, assets:bool):
     is_flag=True,
     help="Procura os arquivos diretamente na pasta assets."
 )
-def webcam(webcam, back, color, h, w, assets):
+def chroma(webcam, back, color, h, w, assets):
     try:
         back_path = back
         
@@ -250,8 +256,20 @@ def color(image:str, assets:bool):
     except ImageNotFound as error:
         raise click.ClickException(str(error)) 
 
+@click.command(
+    help="Comando para detecção de cículos pela cor"
+)
+@click.option(
+    "-c", "--color",
+    type=str,
+    help="Cor do círculo que deseja detectar"
+)
+def circle(color:str="red"):
+    smoothDetect(color.lower())
+
 seg.add_command(hello)
 seg.add_command(color)
+seg.add_command(back)
 seg.add_command(chroma)
-seg.add_command(webcam)
 seg.add_command(object)
+seg.add_command(circle)
